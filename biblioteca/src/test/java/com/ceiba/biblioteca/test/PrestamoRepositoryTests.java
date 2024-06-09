@@ -6,8 +6,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("test_integracion_jpa")
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PrestamoRepositoryTest {
+class PrestamoRepositoryTests {
 
     @Autowired
     PrestamoRepository prestamoRepository;
@@ -52,15 +50,36 @@ public class PrestamoRepositoryTest {
 
         prestamoRepository.save(prestamoNuevo);
 
-        Optional<Prestamo> prestamo1 = prestamoRepository.findByIsbn("existe");
-        assertTrue(prestamo1.isPresent());
-        assertEquals("existe", prestamo1.get().getIsbn());
+        Optional<Prestamo> prestamoExiste= prestamoRepository.findByIsbn("existe");
+        assertTrue(prestamoExiste.isPresent());
+        assertEquals("existe", prestamoExiste.get().getIsbn());
     }
+    @Test
+    @Tag("repository")
+    @DisplayName("Test del metodo findByIdentificacionUsuario para buscar por identificacion")
+    @Order(3)
+    void testFindByIdentificacionUsuarioPrestamo() {
+        Optional<Prestamo> prestamoPorIdentificacionNoExistente = prestamoRepository.findByIdentificacionUsuario("noexiste");
+
+        assertFalse(prestamoPorIdentificacionNoExistente.isPresent());
+
+        Prestamo prestamoNuevo = new Prestamo("89302LS", "existe", 3);
+        prestamoNuevo.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamoNuevo.getTipoUsuario()));
+
+        prestamoRepository.save(prestamoNuevo);
+
+        Optional<Prestamo> prestamoExiste = prestamoRepository.findByIdentificacionUsuario("existe");
+        assertTrue(prestamoExiste.isPresent());
+        assertEquals("existe", prestamoExiste.get().getIdentificacionUsuario());
+        assertNotEquals("89302ls", prestamoExiste.get().getIsbn());
+        assertTrue(prestamoExiste.get().getIsbn().equalsIgnoreCase("89302ls"));
+    }
+
 
     @Test
     @Tag("repository")
     @DisplayName("Test del metodo save")
-    @Order(3)
+    @Order(4)
     void testSavePrestamo() {
         Prestamo prestamoNuevo = new Prestamo("i9383", "nicjef3", 1);
         prestamoNuevo.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamoNuevo.getTipoUsuario()));

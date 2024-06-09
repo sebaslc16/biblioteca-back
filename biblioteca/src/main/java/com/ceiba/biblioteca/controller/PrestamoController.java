@@ -53,7 +53,9 @@ public class PrestamoController {
         Optional<Prestamo> prestamoConsultado = prestamoService.findById(id);
 
         if (!prestamoConsultado.isPresent()) {
-            return ResponseEntity.badRequest().body("Prestamo con el id " + id + " no existe!");
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje", "Prestamo con el id \" + id + \" no existe!");
+            return ResponseEntity.badRequest().body(respuesta);
         }
         return ResponseEntity.ok().body(prestamoConsultado.get());
     }

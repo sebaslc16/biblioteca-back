@@ -39,6 +39,13 @@ public class Prestamo {
         this.tipoUsuario = tipoUsuario;
     }
 
+    public Prestamo(Long id, String isbn, String identificacionUsuario, Integer tipoUsuario) {
+        this.id = id;
+        this.isbn = isbn;
+        this.identificacionUsuario = identificacionUsuario;
+        this.tipoUsuario = tipoUsuario;
+    }
+
     public Long getId() {
         return id;
     }
