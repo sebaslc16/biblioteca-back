@@ -216,6 +216,7 @@ public class PrestamoControllerTests {
         prestamo1.setIdentificacionUsuario(Prestamo.calcularFechaMaximaDevolucion(prestamo1.getTipoUsuario()));
         when(prestamoService.findById(1L)).thenReturn(Optional.ofNullable(prestamo1));
 
+
         mvc.perform(delete("prestamo/"+prestamo1.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").exists())
