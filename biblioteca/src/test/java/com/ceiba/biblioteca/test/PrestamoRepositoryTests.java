@@ -94,4 +94,29 @@ class PrestamoRepositoryTests {
         assertNotNull(prestamoGuardado.getFechaMaximaDevolucion());
     }
 
+    @Test
+    @Tag("repository")
+    @DisplayName("Test del metodo delete")
+    @Order(5)
+    void testDeletePrestamo() {
+        Prestamo prestamoNuevoAEliminar = new Prestamo("7392GH", "eliminar", 1);
+        prestamoNuevoAEliminar.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamoNuevoAEliminar.getTipoUsuario()));
+
+        Prestamo prestamoGuardado = prestamoRepository.save(prestamoNuevoAEliminar);
+
+        assertNotNull(prestamoGuardado);
+        assertEquals("7392GH", prestamoGuardado.getIsbn());
+        assertEquals("eliminar", prestamoGuardado.getIdentificacionUsuario());
+        assertNotEquals(2, prestamoGuardado.getTipoUsuario());
+        assertNotNull(prestamoGuardado.getId());
+        assertNotNull(prestamoGuardado.getFechaMaximaDevolucion());
+
+        prestamoRepository.deleteById(prestamoGuardado.getId());
+
+        Optional<Prestamo> prestamoEliminado = prestamoRepository.findById(prestamoGuardado.getId());
+
+        assertFalse(prestamoEliminado.isPresent());
+
+    }
+
 }

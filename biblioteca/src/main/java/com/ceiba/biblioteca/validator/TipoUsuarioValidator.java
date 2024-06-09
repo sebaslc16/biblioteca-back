@@ -15,6 +15,11 @@ public class TipoUsuarioValidator implements ConstraintValidator<TipoUsuarioVali
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        return value == 1 || value == 2 || value == 3;
+        if(value == null) {
+            return false;
+        } else {
+            return value == 1 || value == 2 || value == 3;
+        }
+
     }
 }

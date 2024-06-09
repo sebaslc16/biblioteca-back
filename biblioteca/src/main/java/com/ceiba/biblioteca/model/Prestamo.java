@@ -2,6 +2,7 @@ package com.ceiba.biblioteca.model;
 
 import com.ceiba.biblioteca.util.TipoUsuarioValidation;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -16,14 +17,17 @@ public class Prestamo {
     private Long id;
 
     @Column(length = 10)
+    @NotNull(message = "Ingrese un isbn valido.")
     @Size(min = 1, max = 10, message = "Son permitidos mínimo 1 y máximo 10 dígitos para el isbn.")
     private String isbn;
 
     @Column(name = "identificacion_usuario", length = 10)
+    @NotNull(message = "Ingrese una identificación de usuario valida.")
     @Size(min = 1, max = 10, message = "Son permitidos mínimo 1 y máximo 10 dígitos para la identificación del usuario.")
     private String identificacionUsuario;
 
     @Column(name = "tipo_usuario", length = 1)
+    @NotNull(message = "Ingrese un tipo de usuario valido")
     @TipoUsuarioValidation
     private Integer tipoUsuario;
 

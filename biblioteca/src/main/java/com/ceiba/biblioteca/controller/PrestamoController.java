@@ -72,4 +72,19 @@ public class PrestamoController {
         return ResponseEntity.ok().body(prestamoConsultadoPorIdentificacion.get());
     }
 
+    @DeleteMapping("/prestamo/{id}")
+    public ResponseEntity<?> deletePrestamoById(@PathVariable Long id) {
+        Optional<Prestamo> prestamoParaEliminar = prestamoService.findById(id);
+
+        Map<String, String> respuesta = new HashMap<>();
+        if(!prestamoParaEliminar.isPresent()) {
+
+            respuesta.put("mensaje",  "No se pudo eliminar el prestamo por que no existe!");
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+        prestamoService.deleteById(id);
+        respuesta.put("mensaje",  "Prestamo eliminado correctamente!");
+        return ResponseEntity.ok().body(respuesta);
+    }
+
 }

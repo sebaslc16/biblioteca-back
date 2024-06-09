@@ -4,6 +4,7 @@ import com.ceiba.biblioteca.model.Prestamo;
 import com.ceiba.biblioteca.repository.PrestamoRepository;
 import com.ceiba.biblioteca.service.PrestamoService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         prestamoRepository.deleteById(id);
     }
 }

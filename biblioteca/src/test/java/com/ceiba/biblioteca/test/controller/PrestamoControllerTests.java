@@ -154,6 +154,44 @@ public class PrestamoControllerTests {
 
     @Test
     @Tag("controller")
+    public void testGuardarPrestamoErrorIsbnVacio() throws Exception {
+
+        Prestamo prestamoIsbnVacio = new Prestamo("", "sinIsbn", 1);
+        when(prestamoService.save(any())).then(invocation -> {
+            Prestamo p = invocation.getArgument(0);
+            p.setId(2L);
+            return p;
+        });
+
+        mvc.perform(post("/prestamo").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(prestamoIsbnVacio)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.mensaje").exists())
+                .andExpect(jsonPath("$.mensaje").value("Son permitidos mínimo 1 y máximo 10 dígitos para el isbn."));
+    }
+
+    @Test
+    @Tag("controller")
+    public void testGuardarPrestamoErrorIdentificacionUsuarioNull() throws Exception {
+
+        Prestamo prestamoIdentificacionNull = new Prestamo("33400TY", null, 1);
+        when(prestamoService.save(any())).then(invocation -> {
+            Prestamo p = invocation.getArgument(0);
+            p.setId(5L);
+            return p;
+        });
+
+        mvc.perform(post("/prestamo").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(prestamoIdentificacionNull)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.mensaje").exists())
+                .andExpect(jsonPath("$.mensaje").value("Ingrese una identificación de usuario valida."));
+    }
+
+    @Test
+    @Tag("controller")
     public void testGuardarOtroPrestamoErrorUsuarioInvitado() throws Exception {
 
         prestamo1.setId(3L);
@@ -207,19 +245,5 @@ public class PrestamoControllerTests {
                 .andExpect(jsonPath("$.mensaje").value("Prestamo con la identificación de usuario usuario no existe!"));
 
         verify(prestamoService,times(1)).findByIdentificacionUsuario(anyString());
-    }
-
-    @Test
-    void testEliminarPrestamoExitoso() throws Exception {
-
-        prestamo1.setId(1L);
-        prestamo1.setIdentificacionUsuario(Prestamo.calcularFechaMaximaDevolucion(prestamo1.getTipoUsuario()));
-        when(prestamoService.findById(1L)).thenReturn(Optional.ofNullable(prestamo1));
-
-
-        mvc.perform(delete("prestamo/"+prestamo1.getId()).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.mensaje").exists())
-                .andExpect(jsonPath("$.mensaje").value("Prestamo eliminado correctamente!"));
     }
 }

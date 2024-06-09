@@ -12,6 +12,6 @@ public interface PrestamoService {
 
     Optional<Prestamo> findByIdentificacionUsuario(String identificacionUsuario);
 
-    void delete(Long id);
+    void deleteById(Long id);
 
 }
