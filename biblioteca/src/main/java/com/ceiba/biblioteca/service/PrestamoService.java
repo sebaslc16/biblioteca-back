@@ -10,4 +10,6 @@ public interface PrestamoService {
 
     Optional<Prestamo> findById(Long id);
 
+    Optional<Prestamo> findByIdentificacionUsuario(String identificacionUsuario);
+
 }

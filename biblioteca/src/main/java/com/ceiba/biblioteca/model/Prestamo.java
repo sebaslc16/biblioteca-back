@@ -1,11 +1,11 @@
 package com.ceiba.biblioteca.model;
 
 import com.ceiba.biblioteca.util.TipoUsuarioValidation;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "prestamos")
@@ -19,7 +19,7 @@ public class Prestamo {
     @Size(min = 1, max = 10, message = "Son permitidos mínimo 1 y máximo 10 dígitos para el isbn.")
     private String isbn;
 
-    @Column(name = "identificacion_usuario",length = 10)
+    @Column(name = "identificacion_usuario", length = 10)
     @Size(min = 1, max = 10, message = "Son permitidos mínimo 1 y máximo 10 dígitos para la identificación del usuario.")
     private String identificacionUsuario;
 
@@ -28,7 +28,6 @@ public class Prestamo {
     private Integer tipoUsuario;
 
     @Column(name = "fecha_maxima_devolucion")
-    @Transient
     private String fechaMaximaDevolucion;
 
     public Prestamo() {
@@ -78,5 +77,35 @@ public class Prestamo {
 
     public void setFechaMaximaDevolucion(String fechaMaximaDevolucion) {
         this.fechaMaximaDevolucion = fechaMaximaDevolucion;
+    }
+
+    public static String calcularFechaMaximaDevolucion(Integer tipoUsuario) {
+
+        LocalDate fechaHoyPrestamo = LocalDate.now();
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        int diasContador = 0;
+        switch (tipoUsuario) {
+            case (1):
+                diasContador = 10;
+                break;
+            case (2):
+                diasContador = 8;
+                break;
+            case (3):
+                diasContador = 7;
+                break;
+        }
+
+        int diasAgregadosFecha = 0;
+
+        while (diasAgregadosFecha < diasContador) {
+            fechaHoyPrestamo = fechaHoyPrestamo.plusDays(1);
+            if (!(fechaHoyPrestamo.getDayOfWeek() == DayOfWeek.SATURDAY || fechaHoyPrestamo.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+                ++diasAgregadosFecha;
+            }
+        }
+        return fechaHoyPrestamo.format(formatoFecha);
+
     }
 }

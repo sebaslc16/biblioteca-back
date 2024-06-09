@@ -2,10 +2,7 @@ package com.ceiba.biblioteca.test;
 
 import com.ceiba.biblioteca.model.Prestamo;
 import com.ceiba.biblioteca.repository.PrestamoRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -17,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("test_integracion_jpa")
 @DataJpaTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrestamoRepositoryTest {
 
     @Autowired
@@ -32,12 +30,9 @@ public class PrestamoRepositoryTest {
         assertFalse(prestamoNoExistente.isPresent());
 
         Prestamo prestamoNuevo = new Prestamo("AI9942", "Z940402", 2);
-        LocalDate fechaPrestamo = LocalDate.now();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        prestamoNuevo.setFechaMaximaDevolucion(fechaPrestamo.format(formato));
+        prestamoNuevo.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamoNuevo.getTipoUsuario()));
 
-        Prestamo prestamoGuardado = prestamoRepository.save(prestamoNuevo);
-        System.out.println(prestamoGuardado.getId());
+        prestamoRepository.save(prestamoNuevo);
 
         Optional<Prestamo> prestamo1 = prestamoRepository.findById(1L);
         assertTrue(prestamo1.isPresent());
@@ -45,13 +40,30 @@ public class PrestamoRepositoryTest {
 
     @Test
     @Tag("repository")
-    @DisplayName("Test del metodo save")
+    @DisplayName("Test del metodo findByIsnb")
     @Order(2)
+    void testFindByIsbnPrestamo() {
+        Optional<Prestamo> prestamoNoExistente = prestamoRepository.findByIsbn("noexiste");
+
+        assertFalse(prestamoNoExistente.isPresent());
+
+        Prestamo prestamoNuevo = new Prestamo("existe", "4849fj", 3);
+        prestamoNuevo.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamoNuevo.getTipoUsuario()));
+
+        prestamoRepository.save(prestamoNuevo);
+
+        Optional<Prestamo> prestamo1 = prestamoRepository.findByIsbn("existe");
+        assertTrue(prestamo1.isPresent());
+        assertEquals("existe", prestamo1.get().getIsbn());
+    }
+
+    @Test
+    @Tag("repository")
+    @DisplayName("Test del metodo save")
+    @Order(3)
     void testSavePrestamo() {
         Prestamo prestamoNuevo = new Prestamo("i9383", "nicjef3", 1);
-        LocalDate fechaPrestamo = LocalDate.now();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        prestamoNuevo.setFechaMaximaDevolucion(fechaPrestamo.format(formato));
+        prestamoNuevo.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamoNuevo.getTipoUsuario()));
 
         Prestamo prestamoGuardado = prestamoRepository.save(prestamoNuevo);
 

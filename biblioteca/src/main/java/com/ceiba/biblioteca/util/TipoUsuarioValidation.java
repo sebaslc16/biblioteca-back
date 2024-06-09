@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = TipoUsuarioValidator.class)
 public @interface TipoUsuarioValidation {
-    String message() default "Tipo de usuario no permitido en la bibloteca";
+    String message() default "Tipo de usuario no permitido en la biblioteca";
 
     Class<?>[] groups() default {};
 

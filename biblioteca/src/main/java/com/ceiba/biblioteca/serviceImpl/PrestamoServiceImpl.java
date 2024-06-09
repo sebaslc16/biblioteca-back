@@ -26,4 +26,9 @@ public class PrestamoServiceImpl implements PrestamoService {
     public Optional<Prestamo> findById(Long id) {
         return prestamoRepository.findById(id);
     }
+
+    @Override
+    public Optional<Prestamo> findByIdentificacionUsuario(String identificacionUsuario) {
+        return prestamoRepository.findByIdentificacionUsuario(identificacionUsuario);
+    }
 }
