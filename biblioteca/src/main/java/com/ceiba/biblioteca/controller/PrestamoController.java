@@ -54,10 +54,22 @@ public class PrestamoController {
 
         if (!prestamoConsultado.isPresent()) {
             Map<String, String> respuesta = new HashMap<>();
-            respuesta.put("mensaje", "Prestamo con el id \" + id + \" no existe!");
+            respuesta.put("mensaje", "Prestamo con el id " + id + " no existe!");
             return ResponseEntity.badRequest().body(respuesta);
         }
         return ResponseEntity.ok().body(prestamoConsultado.get());
+    }
+
+    @GetMapping("/prestamo-identificacion/{idUsuario}")
+    public ResponseEntity<?> findByIdentificacionUsuarioPrestamo(@PathVariable String idUsuario) {
+        Optional<Prestamo> prestamoConsultadoPorIdentificacion = prestamoService.findByIdentificacionUsuario(idUsuario);
+
+        if (!prestamoConsultadoPorIdentificacion.isPresent()) {
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje",  "Prestamo con la identificación de usuario " + idUsuario + " no existe!");
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+        return ResponseEntity.ok().body(prestamoConsultadoPorIdentificacion.get());
     }
 
 }

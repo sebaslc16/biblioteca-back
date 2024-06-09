@@ -1,6 +1,5 @@
 package com.ceiba.biblioteca.test.controller;
 
-import com.ceiba.biblioteca.calificador.SolicitudPrestarLibroTest;
 import com.ceiba.biblioteca.controller.PrestamoController;
 import com.ceiba.biblioteca.model.Prestamo;
 import com.ceiba.biblioteca.service.PrestamoService;
@@ -12,15 +11,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.*;
 
 @WebMvcTest(PrestamoController.class)
 @Tag("controller_mvc_test")
@@ -36,10 +32,23 @@ public class PrestamoControllerTests {
     ObjectMapper objectMapper;
 
     Prestamo prestamo1 = new Prestamo("98493PS", "usuario1", 1);
-    Prestamo prestamo2 = new Prestamo("383KS", "usuario2", 2);
     Prestamo prestamo3 = new Prestamo("2193JS", "usuario3", 3);
 
-    Prestamo prestamo4 = new Prestamo("7833DS", "usuario4", 4);
+    @Test
+    @Tag("controller")
+    void testConsultarPrestamoNoExistente() throws Exception {
+
+        when(prestamoService.findById(7L)).thenReturn(Optional.empty());
+
+        mvc.perform(get("/prestamo/7").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.mensaje").exists())
+                .andExpect(jsonPath("$.mensaje").value("Prestamo con el id 7 no existe!"));
+
+        verify(prestamoService).findById(7L);
+        verify(prestamoService, times(1)).findById(anyLong());
+    }
 
     @Test
     @Tag("controller")
@@ -60,7 +69,7 @@ public class PrestamoControllerTests {
                 .andExpect(jsonPath("$.fechaMaximaDevolucion").isString())
                 .andExpect(jsonPath("$.fechaMaximaDevolucion").value(Prestamo.calcularFechaMaximaDevolucion(1)));
         verify(prestamoService).findById(1L);
-        verify(prestamoService,times(1)).findById(anyLong());
+        verify(prestamoService, times(1)).findById(anyLong());
     }
 
     @Test
@@ -75,11 +84,13 @@ public class PrestamoControllerTests {
         });
 
         mvc.perform(post("/prestamo").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(prestamoNuevo)))
+                        .content(objectMapper.writeValueAsString(prestamoNuevo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.fechaMaximaDevolucion").exists());
+
+        verify(prestamoService).save(any());
     }
 
     @Test
@@ -99,6 +110,8 @@ public class PrestamoControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.mensaje").exists())
                 .andExpect(jsonPath("$.mensaje").value("Tipo de usuario no permitido en la biblioteca"));
+
+        verify(prestamoService,never()).save(any());
     }
 
     @Test
@@ -137,5 +150,75 @@ public class PrestamoControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.mensaje").exists())
                 .andExpect(jsonPath("$.mensaje").value("Son permitidos mínimo 1 y máximo 10 dígitos para la identificación del usuario."));
+    }
+
+    @Test
+    @Tag("controller")
+    public void testGuardarOtroPrestamoErrorUsuarioInvitado() throws Exception {
+
+        prestamo1.setId(3L);
+        prestamo3.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamo3.getTipoUsuario()));
+        when(prestamoService.findByIdentificacionUsuario(prestamo3.getIdentificacionUsuario())).thenReturn(Optional.ofNullable(prestamo3));
+
+        Prestamo prestamoUsuarioInvitado = new Prestamo("049492NC", "usuario3", 3);
+        when(prestamoService.save(any())).then(invocation -> {
+            Prestamo p = invocation.getArgument(0);
+            p.setId(5L);
+            return p;
+        });
+
+        mvc.perform(post("/prestamo").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(prestamoUsuarioInvitado)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.mensaje").exists())
+                .andExpect(jsonPath("$.mensaje").value("El usuario con identificación " + prestamoUsuarioInvitado.getIdentificacionUsuario() +
+                                                        " ya tiene un libro prestado por lo cual no se le puede realizar otro préstamo"));
+
+        verify(prestamoService, never()).save(any());
+        verify(prestamoService, times(1)).findByIdentificacionUsuario(prestamoUsuarioInvitado.getIdentificacionUsuario());
+    }
+
+    @Test
+    @Tag("controller")
+    void testConsultarPorIdentificacionUsuarioExitoso() throws Exception {
+
+        prestamo3.setId(3L);
+        prestamo3.setFechaMaximaDevolucion(Prestamo.calcularFechaMaximaDevolucion(prestamo3.getTipoUsuario()));
+        when(prestamoService.findByIdentificacionUsuario(prestamo3.getIdentificacionUsuario())).thenReturn(Optional.ofNullable(prestamo3));
+
+        mvc.perform(get("/prestamo-identificacion/"+prestamo3.getIdentificacionUsuario()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.isbn").value(prestamo3.getIsbn()))
+                .andExpect(jsonPath("$.fechaMaximaDevolucion").value(Prestamo.calcularFechaMaximaDevolucion(prestamo3.getTipoUsuario())));
+
+        verify(prestamoService,times(1)).findByIdentificacionUsuario(prestamo3.getIdentificacionUsuario());
+    }
+
+    @Test
+    void testConsultarPorIdentificacionUsuarioErrorNoExiste() throws Exception {
+
+        when(prestamoService.findByIdentificacionUsuario("usuario")).thenReturn(Optional.empty());
+
+        mvc.perform(get("/prestamo-identificacion/usuario").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensaje").exists())
+                .andExpect(jsonPath("$.mensaje").value("Prestamo con la identificación de usuario usuario no existe!"));
+
+        verify(prestamoService,times(1)).findByIdentificacionUsuario(anyString());
+    }
+
+    @Test
+    void testEliminarPrestamoExitoso() throws Exception {
+
+        prestamo1.setId(1L);
+        prestamo1.setIdentificacionUsuario(Prestamo.calcularFechaMaximaDevolucion(prestamo1.getTipoUsuario()));
+        when(prestamoService.findById(1L)).thenReturn(Optional.ofNullable(prestamo1));
+
+        mvc.perform(delete("prestamo/"+prestamo1.getId()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mensaje").exists())
+                .andExpect(jsonPath("$.mensaje").value("Prestamo eliminado correctamente!"));
     }
 }

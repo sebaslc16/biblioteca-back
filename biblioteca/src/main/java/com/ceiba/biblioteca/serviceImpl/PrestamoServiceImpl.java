@@ -3,7 +3,6 @@ package com.ceiba.biblioteca.serviceImpl;
 import com.ceiba.biblioteca.model.Prestamo;
 import com.ceiba.biblioteca.repository.PrestamoRepository;
 import com.ceiba.biblioteca.service.PrestamoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,5 +29,10 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     public Optional<Prestamo> findByIdentificacionUsuario(String identificacionUsuario) {
         return prestamoRepository.findByIdentificacionUsuario(identificacionUsuario);
+    }
+
+    @Override
+    public void delete(Long id) {
+        prestamoRepository.deleteById(id);
     }
 }
