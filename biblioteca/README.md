@@ -1,87 +1,40 @@
-## Tencnologías a usar:
-- Java version: 1.8
-- Gradle version: 6.8.3
-- Spring Boot version: 2.2.1.RELEASE
+# DI Products Springboot
 
-## Archivos de solo lectura:
-Estos archivos no podrán ser modificados por usted
-- _src/test/java/com/ceiba/biblioteca/PrestamoTests_: en esta clase se encuentran las pruebas automatizadas encargadas de calificar la prueba, usted podrá ir ejecutando estas pruebas para ir verificando el avance y completitud de la solución. Pero no podrá modificar nada de esta clase.
+## Dev
+<h1 align="center">Hi 👋, I'm Joan Sebastian Londoño</h1>
+<h3 align="center"> A passionate software developer from Colombia </h3>
+<h2 align="center"> API REST Springboot Biblioteca </h2>
+<h2 align="center"> Skills used: Java, Springboot, IntelliJ, MVC, Gradle, JUnit, Mockito, Swagger </h2>
 
-## Problema de negocio
-El sistema busca automatizar el comportamiento de un bibliotecario cuando un usuario
-desea prestar un libro.
+<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=sebaslc16" alt="sebaslc16" /></a> </p>
 
-Un préstamo es representado en nuestro negocio por los siguientes atributos
+- 🔭 I’m currently working on [different projects with Java, Angular, Sprinboot, etc](https://github.com/sebaslc16)
 
-**isbn**: identificador único de un libro (campo alfanumérico de máximo 10 dígitos)  
-**identificacionUsuario**: número de la identificación del usuario (campo alfanumérico de maximo 10 digitos)  
-**tipoUsuario**: determina la relación que tiene el usuario con la biblioteca, corresponde a un campo que puede tener solo alguno de los siguientes dígitos numérico  
-1. usuario afilado
-2. usuario empleado de la biblioteca
-3. usuario invitado
+- 🌱 I’m currently learning **React, Node, NestJs, NextJs, Redux.... and more**
 
-## Objetivo
-Crear una API tipo REST la cual permita llevar a cabo las siguientes funcionalidades
-1. El Path debe ser `/prestamo`  y el método HTTP tipo **POST**: permite crear un prestamo con las siguientes validaciones
-    1. Un usuario invitado solo puede tener un libro prestado en la biblioteca, si un usuario invitado intenta prestar más de un libro debería retornar un error HTTP 400 con el siguiente json.  
-       **Para verificar si un usuario ya tiene un préstamo se debe usar el campo _identificacionUsuario_**
-        ```json
-            {
-             "mensaje" : "El usuario con identificación xxxxxx ya tiene un libro prestado por lo cual no se le puede realizar otro préstamo"
-            }
-        ```       
-       Donde **xxxxxx** corresponde a la identificación del usuario que intenta hacer el prestamo
-    2. Al momento de realizar el préstamo se debe hacer el cálculo de la fecha máxima de devolución del libro, con la siguiente reglas de negocio
-        1. Si el préstamo lo hace un usuario tipo **afiliado** la fecha de devolución debería ser la fecha actual más 10 días sin contar sábados y domingos
-        2. Si el préstamo lo hace un usuario tipo **empleado** la fecha de devolución debería ser la fecha actual más 8 días sin contar sábados y domingos
-        3. Si el préstamo lo hace un usuario tipo **invitado** la fecha de devolución debería ser la fecha actual más 7 días sin contar sábados y domingos  
-        **Esta fecha deberá ser almacenada en la base de datos junto con toda la información del préstamo**
-   3. Si en el campo **tipoUsuario** llega un valor diferente a los permitidos, deberá retornar un un error HTTP 400 con el siguiente JSON
-        ```json
-            {
-              "mensaje" : "Tipo de usuario no permitido en la biblioteca"
-            }
-        ```
-   **Ejemplo de petición y respuesta exitosa**  
-   Petición  path: `/prestamo` método: **POST**
-   ```json
-    {
-        "isbn":"DASD154212",
-        "identificaciónUsuario":"154515485",
-        "tipoUsuario":1
-    }
-    ```
-   **Respuesta exitosa**
-    ```json
-        {
-            "id": 1,
-            "fechaMaximaDevolucion" : "15/02/2021"
-        }
-    ```
-2. El path debe ser `/prestamo/{id-prestamo}` y el método HTTP tipo **GET**, donde la variable  {id-prestamo} corresponde al identificador con el cual se almacenó el préstamo en la base de datos, explicado en el primer punto.
-   El siguiente es un ejemplo de petición y un ejemplo de cómo debería ser la respuesta en un caso exitoso  
-   Petición  path: `/prestamo/1` método: **GET**
-   ```json
-        {
-            "id": 1,	
-            "isbn":"DASD154212",
-            "identificaciónUsuario":"154515485",
-            "tipoUsuario":1,
-             "fechaMaximaDevolucion" : "15/02/2021"
-        }
-    ```
-## Restricciones técnicas
-1. La base de datos debe ser en memoria, en el archivo application.properties ya se encuentra la configuración la cual está soportada por el motor H2, si necesita modificar estos archivos o algo de la conexión asegúrese de que sea una base de datos en memoria.
-    1. Si necesita ejecutar sentencias DDL(crear tablas, modificar tablas...) antes de que la aplicación se ejecute, debe crear un archivo llamado _schema.sql_ en la carpeta _src/main/resources_ y spring automáticamente lo ejecutará
+- 👯 I’m looking to collaborate on **exciting and creative projects**
 
-## Conceptos a evaluar
-1. **Cumpliento de los requerimientos**: para esto hay 6 pruebas automatizadas en la clase PrestamoTests ubicada en el paquete src/test/java, las cuales son las encargadas de validar que usted cumpla con cada uno de los requerimientos. Estas pruebas se encuentran fallando y su objetivo es hacerlas funcionar correctamente.  
-2. **Código limpio**: valoramos que su código sea mantenible y con principios de código limpio.  
-3. **Arquitectura**: valoramos que su arquitectura propuesta demuestre una correcta separación de responsabilidades.
-   1. Te recomendamos hacer uso del principio de responsabilidad única
-   2. Te recomendamos usar un patrón de arquitectura, como arquitectura hexagonal, arquitectura limpia o MVC.
-   3. Trata de no poner la lógica de negocio en los controladores, separa tu logica de acuerdo a las restricciones del patrón de arquitectura seleccionado.
-4. **Pruebas unitarias y de integración (deseable)**: valoramos si logra construir pruebas unitarias y de integración a su lógica de negocio.
-5. **Si el sistema identifica que la prueba no ha sido desarrollada por usted inmediatamente se cancela el proceso de selección**
-           
+- 👨‍💻 All of my projects are available at [https://github.com/sebaslc16](https://github.com/sebaslc16)
+
+- 💻 This is my personal portfolio [https://sebaslc16.github.io/personal-portfolio/](https://sebaslc16.github.io/personal-portfolio/)
+
+- 💬 Ask me about **Angular, Springboot, Java, JavaScript....**
+
+- 📫 How to reach me **sebaslc1699@hotmail.com or sebaslc199916@gmail.com**
+
+- 📄 Know about my experiences [https://read.cv/sebaslc16](https://read.cv/sebaslc16)
+
+<h3 align="left">Connect with me:</h3>
+<p align="left">
+<a href="https://dev.to/sebaslc16" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/devto.svg" alt="sebaslc16" height="30" width="40" /></a>
+<a href="https://linkedin.com/in/sebaslc16" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="sebaslc16" height="30" width="40" /></a>
+</p>
+
+<h3 align="left">Languages and Tools:</h3>
+<p align="left"> <a href="https://angular.io" target="_blank" rel="noreferrer"> <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="angular" width="40" height="40"/> </a> <a href="https://azure.microsoft.com/en-in/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/microsoft_azure/microsoft_azure-icon.svg" alt="azure" width="40" height="40"/> </a> <a href="https://getbootstrap.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/> </a> <a href="https://www.chartjs.org" target="_blank" rel="noreferrer"> <img src="https://www.chartjs.org/media/logo-title.svg" alt="chartjs" width="40" height="40"/> </a> <a href="https://www.w3schools.com/cpp/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg" alt="cplusplus" width="40" height="40"/> </a> <a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> </a> <a href="https://www.docker.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/> </a> <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="40" height="40"/> </a> <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a> <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> </a> <a href="https://www.java.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg" alt="java" width="40" height="40"/> </a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="mysql" width="40" height="40"/> </a> <a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a> <a href="https://www.oracle.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/oracle/oracle-original.svg" alt="oracle" width="40" height="40"/> </a> <a href="https://www.postgresql.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/> </a> <a href="https://postman.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="postman" width="40" height="40"/> </a> <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a> <a href="https://www.sqlite.org/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> </a> <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/> </a> </p>
+
+<p><img align="center" src="https://github-readme-stats.vercel.app/api/top-langs?username=sebaslc16&show_icons=true&theme=tokyonight&locale=en&layout=compact" alt="sebaslc16" /></p>
+
+<p><img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=sebaslc16&" alt="sebaslc16" /></p>
+
 
